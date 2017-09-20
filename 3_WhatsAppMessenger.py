@@ -16,14 +16,14 @@ def browser():
 def send(contact, message):
 	web = browser()
 	# contact_elem = web.find_element_by_xpath('//span[contains(text(), {})]'.format(contact))
-	contact_elem = web.find_element_by_xpath('//span[contains(text(), "Sanjana Iyyappan")]')
+	contact_elem = web.find_element_by_xpath('//span[contains(text(), "Saranyaraj")]')
 	contact_elem.click()
 	input_elem = web.find_elements_by_class_name('input')
 	input_elem[0].send_keys(message)
 	input_elem[0].send_keys('\n')
 
 if __name__ == '__main__':
-	send("Sanjana Iyyappan", time.strftime('%m-%d-%y_%H-%M-%S'))
+	send("Saranyaraj", time.strftime('%m-%d-%y_%H-%M-%S'))
 
 
 # web.find_element_by_class_name('send-container').click()
