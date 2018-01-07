@@ -1,46 +1,33 @@
 #!usr/bin/env python3
 
 from selenium import webdriver
-# from selenium.webdriver.support.ui import WebDriverWait
-# from selenium.webdriver.support import expected_condition
-# from selenium.webdriver.common.keys import Keys
-# from selenium.webdriver.common.by import By
 import time
+import json
+from rbmq_client import rbmq_module
+from bs4 import BeautifulSoup
 
-def browser():
-	web = webdriver.Chrome("/home/chz/Project/Project-WhatsNews/chromedriver")
-	web.get("https://web.whatsapp.com/")
-	input('Wait for sometime before pressing enter')
-	return web
+class WhatsappMessenger:
 
-def send(contact, message):
-	web = browser()
-	# contact_elem = web.find_element_by_xpath('//span[contains(text(), {})]'.format(contact))
-	contact_elem = web.find_element_by_xpath('//span[contains(text(), "Saranyaraj")]')
-	contact_elem.click()
-	input_elem = web.find_elements_by_class_name('input')
-	input_elem[0].send_keys(message)
-	input_elem[0].send_keys('\n')
+	def __init__(self):
+		self.rbmq_module = rbmq_module()
+		self.web = webdriver.Chrome("/home/sanjana/Project-WhatsNews/chromedriver")
+		self.web.get("https://web.whatsapp.com/")
+		input("press enter")
+
+	def get_message(self, contact):
+		message = {}
+		message = self.rbmq_module.subscribe()
+		if message:
+			self.send(contact, message)
+
+	def send(self,contact, message):
+		message = json.loads(message.decode())
+		self.web.find_element_by_xpath('//span[@title="Jithu"]').click()
+		input_elem = self.web.find_elements_by_class_name('input-container')
+		input_elem[0].send_keys(message["headlines"])
+		input_elem[0].send_keys('\n')
 
 if __name__ == '__main__':
-	send("Saranyaraj", time.strftime('%m-%d-%y_%H-%M-%S'))
-
-
-# web.find_element_by_class_name('send-container').click()
-
-
-# wait = WebDriverWait(driver, 600)
-# target = '"Sanjana Iyyappan"'
-# msg = time.strftime('%m-%d-%y_%H-%M-%S')
-# x_arg = '//span[contains(@title,' + target + ')]'
-# group_title = wait.until(EC.presence_of_element_located((
-#     By.XPATH, x_arg)))
-# group_title.click()
-# inp_xpath = '//div[@class="input"][@dir="auto"][@data-tab="1"]'
-# input_box = wait.until(EC.presence_of_element_located((
-#     By.XPATH, inp_xpath)))
-# for i in range(100):
-#     input_box.send_keys(string + Keys.ENTER)
-#     time.sleep(1)
-
-    
+	what_mes = WhatsappMessenger()
+	while(1):
+		what_mes.get_message("Jithu")
